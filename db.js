@@ -208,7 +208,7 @@ async function fbDB() {
   let writer = !navigator.locks;
   navigator.locks?.request('pm-cache-writer', { ifAvailable: true }, lock => { if (lock) { writer = true; return new Promise(() => {}); } });
   const clearedAt = () => Number(localStorage.getItem('pm_logs_cleared_' + uid)) || 0; // отметка «консоль очищена» общая для вкладок
-  const persist = () => { if (!writer) return; clearTimeout(saveT); saveT = setTimeout(() => { try { localStorage.setItem('pm_fb_v3_' + uid, JSON.stringify(C)); } catch {} }, 400); };
+  const persist = () => { if (!writer) return; clearTimeout(saveT); saveT = setTimeout(() => { try { localStorage.setItem('pm_fb_v4_' + uid, JSON.stringify(C)); } catch {} }, 400); };
   const subs = { workers: new Set(), targets: new Set(), stats: new Set(), logs: new Set(), run: new Set(), engine: new Set() };
   const fire = (k, arg) => subs[k].forEach(f => f(arg));
   let running = false;
@@ -256,7 +256,7 @@ async function fbDB() {
     }, fail);
   }
   function start() {
-    try { C = { ...blank(), ...JSON.parse(localStorage.getItem('pm_fb_v3_' + uid)) }; } catch { C = blank(); }
+    try { C = { ...blank(), ...JSON.parse(localStorage.getItem('pm_fb_v4_' + uid)) }; } catch { C = blank(); }
     const t = clearedAt(); if (t) C.logs = C.logs.filter(l => l.ts > t);
     stops = [
       inc('workers', 'workers'), inc('targets', 'targets'), inc('stats_daily', 'stats'), logStream(),
@@ -339,7 +339,12 @@ async function fbDB() {
         return { code: d.code || 200, text };
       } catch (e) { cleanup(d && d.parts); throw e; }
     },
-    onWorkers: cb => sub('workers', cb, () => list(C.workers, (a, b) => (a.since || 0) - (b.since || 0))),
+    // один логин — одна строка: если в базе остались старые дубли, берём самую свежую запись
+    onWorkers: cb => sub('workers', cb, () => {
+      const best = new Map();
+      for (const w of list(C.workers, (a, b) => (a.since || 0) - (b.since || 0))) { const p = best.get(w.login); if (!p || (w.since || 0) >= (p.since || 0)) best.set(w.login, w); }
+      return [...best.values()];
+    }),
     onTargets: cb => sub('targets', cb, () => list(C.targets, (a, b) => (b.ts || 0) - (a.ts || 0))),
     onRun: cb => sub('run', cb, () => running),
     onEngine: cb => sub('engine', cb, () => ({ seen: !!engine, lastSeen: engine?.lastSeen || 0, ttl: ENGINE_TTL, version: engine?.version || '', note: engine?.note || '', chatSince: engine?.chat_since || 0, funnelNext: engine?.funnel_next_tick_at || 0, funnelSince: engine?.funnel_since || 0, funnelOnly: engine?.funnel_only || [] })),

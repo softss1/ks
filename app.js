@@ -376,7 +376,7 @@ let apiProbing = apiProbe();
 // действия, которые сервер выполняет по команде из Firestore, когда сайт открыт НЕ с локального сервера (GitHub, телефон)
 const RPC_OK = [
   /^\/targets\/[^/]+\/(cancel|restart|chat|reply)$/, /^\/update-prices$/, /^\/prices$/,
-  /^\/workers\/[^/]+\/(activity|enable|disable)$/, /^\/sources(\/[^/]+)?$/, /^\/cybershoke\/modes$/, /^\/messages$/,
+  /^\/workers\/[^/]+\/(activity|enable|disable|guard-login)$/, /^\/sources(\/[^/]+)?$/, /^\/cybershoke\/modes$/, /^\/messages$/,
 ];
 const rpcCache = new Map();
 async function apiFetch(url, opts) {
