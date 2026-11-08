@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Панель управления</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Crect%20width=%2264%22%20height=%2264%22%20rx=%2216%22%20fill=%22%230e1116%22/%3E%3Crect%20x=%221%22%20y=%221%22%20width=%2262%22%20height=%2262%22%20rx=%2215%22%20fill=%22none%22%20stroke=%22%232a303b%22%20stroke-width=%222%22/%3E%3Cpath%20d=%22M16%2040a16%2016%200%200%201%2032%200%22%20fill=%22none%22%20stroke=%22%23e8eaee%22%20stroke-width=%225%22%20stroke-linecap=%22round%22/%3E%3Cpath%20d=%22M32%2040l9-12%22%20fill=%22none%22%20stroke=%22%235cb98a%22%20stroke-width=%225%22%20stroke-linecap=%22round%22/%3E%3Ccircle%20cx=%2232%22%20cy=%2240%22%20r=%224%22%20fill=%22%23e8eaee%22/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAWfmNhQlgAABZ+anVtYgAAAB5qdW1kYzJwYQARABCAAACqADibcQNjMnBhAAAAFlhqdW1iAAAAR2p1bWRjMm1hABEAEIAAAKoAOJtxA3VybjpjMnBhOmYxOGQxYThjLTEyN2MtNDRiNy1iYjFhLTNmNTIxNDc5YzY0ZQAAAAOTanVtYgAAAClqdW1kYzJhcwARABCAAACqADibcQNjMnBhLmFzc2VydGlvbnMAAAAAuGp1bWIAAABEanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5pbmdyZWRpZW50LnYzAAAAABhjMnNo8M4UxIg7P7+PbJJoiAmUxgAAAGxjYm9yo2lkYzpmb3JtYXRpaW1hZ2UvcG5namluc3RhbmNlSUR4LHhtcDppaWQ6NGMxZjcyNDktZjVjMy00MDgyLTk1MGMtYmE2MGYzODA4N2U0bHJlbGF0aW9uc2hpcGhwYXJlbnRPZgAAAeJqdW1iAAAAQWp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuYWN0aW9ucy52MgAAAAAYYzJzaGS6szGIBxoNwl1bGAKVn2sAAAGZY2JvcqJnYWN0aW9uc4KiZmFjdGlvbmtjMnBhLm9wZW5lZGpwYXJhbWV0ZXJzoWtpbmdyZWRpZW50c4GiY3VybHgtc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5pbmdyZWRpZW50LnYzZGhhc2hYILa6pM6lX0OcgTZevtL6dUd0SGwyEekDjcJcMs59MraUpGZhY3Rpb254HWNvbS5hbnRocm9waWMuY2xhdWRlLnByb3ZpZGVkanBhcmFtZXRlcnOheB9jb20uYW50aHJvcGljLm9yaWdpbi1jb25maWRlbmNlZ3Vua25vd25rZGVzY3JpcHRpb254ZkNsYXVkZSBwcm92aWRlZCB0aGlzIGZpbGUgYXQgdGhlIHJlcXVlc3Qgb2YgYSB1c2VyIGFuZCBtYXkgaGF2ZSBjcmVhdGVkIG9yIG1vZGlmaWVkIHRoZSBmaWxlIGNvbnRlbnRzLm1zb2Z0d2FyZUFnZW50oWRuYW1lZkNsYXVkZXJhbGxBY3Rpb25zSW5jbHVkZWT1AAAAyGp1bWIAAABAanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5oYXNoLmRhdGEAAAAAGGMyc2iiXCB1TO4xEBQuWMfqghH7AAAAgGNib3KlY2FsZ2ZzaGEyNTZjcGFkTQAAAAAAAAAAAAAAAABkaGFzaFggVUmdDB/0pmKqF4QvGFPS8eeCkmMFxfzgoWVsZZs+dnJkbmFtZW5qdW1iZiBtYW5pZmVzdGpleGNsdXNpb25zgaJlc3RhcnQYIWZsZW5ndGgZFooAAAI+anVtYgAAACdqdW1kYzJjbAARABCAAACqADibcQNjMnBhLmNsYWltLnYyAAAAAg9jYm9ypWNhbGdmc2hhMjU2aXNpZ25hdHVyZXhNc2VsZiNqdW1iZj0vYzJwYS91cm46YzJwYTpmMThkMWE4Yy0xMjdjLTQ0YjctYmIxYS0zZjUyMTQ3OWM2NGUvYzJwYS5zaWduYXR1cmVqaW5zdGFuY2VJRHgseG1wOmlpZDphNDEwYTdlMC1hMjM5LTQxZmItOGM2Mi00YWIxM2MzMTg5OTFyY3JlYXRlZF9hc3NlcnRpb25zg6JjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggtrqkzqVfQ5yBNl6+0vp1R3RIbDIR6QONwlwyzn0ytpSiY3VybHgqc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5hY3Rpb25zLnYyZGhhc2hYILuT7hTe3aYbpPgXKDabDNBZyFYmJEqyCqQlO8d4fV8jomN1cmx4KXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaGFzaC5kYXRhZGhhc2hYICgddPRSNXwhQfzd38kZOT8RXzhP2yr45Jz1mUJ3NvcIdGNsYWltX2dlbmVyYXRvcl9pbmZvo2RuYW1lb0FudGhyb3BpYyBGaWxlc2d2ZXJzaW9uZTEuMC4wa3NwZWNWZXJzaW9uZTIuNC4wAAAQOGp1bWIAAAAoanVtZGMyY3MAEQAQgAAAqgA4m3EDYzJwYS5zaWduYXR1cmUAAAAQCGNib3LShFkCEqIBJhghWQIKMIICBjCCAY2gAwIBAgIUQOWgCu7COdC+uIP6BkIFPWdVEwAwCgYIKoZIzj0EAwMwSTEXMBUGA1UEChMOQW50aHJvcGljLCBQQkMxLjAsBgNVBAMTJUFudGhyb3BpYyBDb250ZW50IENyZWRlbnRpYWxzIFJvb3QgQ0EwHhcNMjYwODA3MTg0MzU2WhcNMjgwODA2MTk0MzU2WjBEMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEpMCcGA1UEAxMgQW50aHJvcGljIENsYXVkZSBDb250ZW50IFNpZ25pbmcwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASYegpry1AYBRTVNL1CpTlbROnY3dey+UrsF9C3phYrATN3ZHf93Mo8RQN0KOUuOn19P4oWNFWe5n2/She9N7eTo1gwVjAOBgNVHQ8BAf8EBAMCB4AwFQYDVR0lBA4wDAYKKwYBBAGD6F4CATAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFM5R4gSBTmRbI/jjxM+aPpzB11zCMAoGCCqGSM49BAMDA2cAMGQCMDFzHRSeAXrSy1WOzkbhPZ6Km2wGTmZ/2gK18k8BQGXyqz88Rdrz6CTX9flAnYNVxgIwcF9c3fVhqmJKpi+UhasNUMko69cyX6STPfta3Q8EjyzDjzoyrol46FP6VFHhvUcJoWNwYWRZDZ4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAWfmNhQlgAABZ+anVtYgAAAB5qdW1kYzJwYQARABCAAACqADibcQNjMnBhAAAAFlhqdW1iAAAAR2p1bWRjMm1hABEAEIAAAKoAOJtxA3VybjpjMnBhOmYxOGQxYThjLTEyN2MtNDRiNy1iYjFhLTNmNTIxNDc5YzY0ZQAAAAOTanVtYgAAAClqdW1kYzJhcwARABCAAACqADibcQNjMnBhLmFzc2VydGlvbnMAAAAAuGp1bWIAAABEanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5pbmdyZWRpZW50LnYzAAAAABhjMnNo8M4UxIg7P7+PbJJoiAmUxgAAAGxjYm9yo2lkYzpmb3JtYXRpaW1hZ2UvcG5namluc3RhbmNlSUR4LHhtcDppaWQ6NGMxZjcyNDktZjVjMy00MDgyLTk1MGMtYmE2MGYzODA4N2U0bHJlbGF0aW9uc2hpcGhwYXJlbnRPZgAAAeJqdW1iAAAAQWp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuYWN0aW9ucy52MgAAAAAYYzJzaGS6szGIBxoNwl1bGAKVn2sAAAGZY2JvcqJnYWN0aW9uc4KiZmFjdGlvbmtjMnBhLm9wZW5lZGpwYXJhbWV0ZXJzoWtpbmdyZWRpZW50c4GiY3VybHgtc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5pbmdyZWRpZW50LnYzZGhhc2hYILa6pM6lX0OcgTZevtL6dUd0SGwyEekDjcJcMs59MraUpGZhY3Rpb254HWNvbS5hbnRocm9waWMuY2xhdWRlLnByb3ZpZGVkanBhcmFtZXRlcnOheB9jb20uYW50aHJvcGljLm9yaWdpbi1jb25maWRlbmNlZ3Vua25vd25rZGVzY3JpcHRpb254ZkNsYXVkZSBwcm92aWRlZCB0aGlzIGZpbGUgYXQgdGhlIHJlcXVlc3Qgb2YgYSB1c2VyIGFuZCBtYXkgaGF2ZSBjcmVhdGVkIG9yIG1vZGlmaWVkIHRoZSBmaWxlIGNvbnRlbnRzLm1zb2Z0d2FyZUFnZW50oWRuYW1lZkNsYXVkZXJhbGxBY3Rpb25zSW5jbHVkZWT1AAAAyGp1bWIAAABAanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5oYXNoLmRhdGEAAAAAGGMyc2iiXCB1TO4xEBQuWMfqghH7AAAAgGNib3KlY2FsZ2ZzaGEyNTZjcGFkTQAAAAAAAAAAAAAAAABkaGFzaFggVUmdDB/0pmKqF4QvGFPS8eeCkmMFxfzgoWVsZZs+dnJkbmFtZW5qdW1iZiBtYW5pZmVzdGpleGNsdXNpb25zgaJlc3RhcnQYIWZsZW5ndGgZFooAAAI+anVtYgAAACdqdW1kYzJjbAARABCAAACqADibcQNjMnBhLmNsYWltLnYyAAAAAg9jYm9ypWNhbGdmc2hhMjU2aXNpZ25hdHVyZXhNc2VsZiNqdW1iZj0vYzJwYS91cm46YzJwYTpmMThkMWE4Yy0xMjdjLTQ0YjctYmIxYS0zZjUyMTQ3OWM2NGUvYzJwYS5zaWduYXR1cmVqaW5zdGFuY2VJRHgseG1wOmlpZDphNDEwYTdlMC1hMjM5LTQxZmItOGM2Mi00YWIxM2MzMTg5OTFyY3JlYXRlZF9hc3NlcnRpb25zg6JjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggtrqkzqVfQ5yBNl6+0vp1R3RIbDIR6QONwlwyzn0ytpSiY3VybHgqc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5hY3Rpb25zLnYyZGhhc2hYILuT7hTe3aYbpPgXKDabDNBZyFYmJEqyCqQlO8d4fV8jomN1cmx4KXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaGFzaC5kYXRhZGhhc2hYICgddPRSNXwhQfzd38kZOT8RXzhP2yr45Jz1mUJ3NvcIdGNsYWltX2dlbmVyYXRvcl9pbmZvo2RuYW1lb0FudGhyb3BpYyBGaWxlc2d2ZXJzaW9uZTEuMC4wa3NwZWNWZXJzaW9uZTIuNC4wAAAQOGp1bWIAAAAoanVtZGMyY3MAEQAQgAAAqgA4m3EDYzJwYS5zaWduYXR1cmUAAAAQCGNib3LShFkCEqIBJhghWQIKMIICBjCCAY2gAwIBAgIUQOWgCu7COdC+uIP6BkIFPWdVEwAwCgYIKoZIzj0EAwMwSTEXMBUGA1UEChMOQW50aHJvcGljLCBQQkMxLjAsBgNVBAMTJUFudGhyb3BpYyBDb250ZW50IENyZWRlbnRpYWxzIFJvb3QgQ0EwHhcNMjYwODA3MTg0MzU2WhcNMjgwODA2MTk0MzU2WjBEMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEpMCcGA1UEAxMgQW50aHJvcGljIENsYXVkZSBDb250ZW50IFNpZ25pbmcwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASYegpry1AYBRTVNL1CpTlbROnY3dey+UrsF9C3phYrATN3ZHf93Mo8RQN0KOUuOn19P4oWNFWe5n2/She9N7eTo1gwVjAOBgNVHQ8BAf8EBAMCB4AwFQYDVR0lBA4wDAYKKwYBBAGD6F4CATAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFM5R4gSBTmRbI/jjxM+aPpzB11zCMAoGCCqGSM49BAMDA2cAMGQCMDFzHRSeAXrSy1WOzkbhPZ6Km2wGTmZ/2gK18k8BQGXyqz88Rdrz6CTX9flAnYNVxgIwcF9c3fVhqmJKpi+UhasNUMko69cyX6STPfta3Q8EjyzDjzoyrol46FP6VFHhvUcJoWNwYWRZDZ4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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">
+<meta name="theme-color" content="#0a0c10">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="licBlock" hidden style="position:fixed;inset:0;z-index:99999;background:#0a0c10;color:#e8eaee;font:16px/1.5 Inter,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;text-align:center">
+  <div style="max-width:420px;padding:0 20px">
+    <h1 style="font-size:20px;margin:0 0 10px">Доступ приостановлен</h1>
+    <p id="licBlockReason" style="color:#8a91a0;margin:0 0 6px">нет оплаты</p>
+    <p style="color:#515867;font-size:13px;margin:0">Свяжитесь с разработчиком: <a href="https://t.me/vladoss_011" target="_blank" style="color:#5cb98a">@vladoss_011</a></p>
+  </div>
+</div>
+<script>
+(function() {
+  var KEY = 'ffb5f771-01fae7ee-e6b85c67-32913c09', PROJ = 'vlad-licenses';
+  var url = 'https://firestore.googleapis.com/v1/projects/' + PROJ + '/databases/(default)/documents/licenses/' + KEY;
+  var hb = 'https://firestore.googleapis.com/v1/projects/' + PROJ + '/databases/(default)/documents/heartbeats/' + KEY;
+  function block(reason) {
+    var el = document.getElementById('licBlock'); if (!el) return;
+    document.getElementById('licBlockReason').textContent = reason || 'нет оплаты';
+    el.hidden = false;
+    var app = document.getElementById('app'); if (app) app.style.display = 'none';
+  }
+  function doCheck() {
+    fetch(url).then(function(r) {
+      if (r.status === 404) { block('лицензия не найдена'); return; }
+      if (!r.ok) return; // сеть барахлит — не блокируем фронт из-за временной ошибки
+      return r.json().then(function(doc) {
+        var f = (doc && doc.fields) || {};
+        var active = !!(f.active && f.active.booleanValue === true);
+        var paidUntil = (f.paidUntil && f.paidUntil.stringValue) || '';
+        var today = new Date().toISOString().slice(0, 10);
+        var ok = active && paidUntil >= today;
+        if (!ok) { block(!active ? 'доступ закрыт администратором' : 'истёк срок оплаты (до ' + paidUntil + ')'); return; }
+        fetch(hb + '?updateMask.fieldPaths=t_frontend', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields: { t_frontend: { integerValue: String(Date.now()) } } }) }).catch(function() {});
+      });
+    }).catch(function() {}); // нет сети у браузера — не блокируем, сервер проверит сам
+  }
+  doCheck();
+  setInterval(doCheck, 15 * 1000); // перепроверка раз в 15 сек — блокировка сработает без обновления страницы
+})();
+</script>
+
+<div class="app" id="app" data-view="dashboard">
+  <div class="main" id="top">
+    <header class="top">
+      <nav id="nav" class="tabs">
+      <a href="#/dashboard" data-view="dashboard" class="on"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>Панель</span></a>
+      <a href="#/workers" data-view="workers"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.4-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><path d="M16 4.8a3.5 3.5 0 0 1 0 6.4M18.5 14.8c1.7.7 2.8 2.3 3 5"/></svg><span>Воркеры</span></a>
+      <a href="#/targets" data-view="targets"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg><span>Цели</span></a>
+      <a href="#/logs" data-view="logs"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M9 12h6M9 16h6"/></svg><span>Логи</span></a>
+      <a href="#/prices" data-view="prices"><svg viewBox="0 0 24 24"><path d="M20 12.5 12.5 20a2 2 0 0 1-2.8 0L3 13.3V4h9.3L20 11.7a1 1 0 0 1 0 .8z"/><circle cx="8" cy="8.5" r="1.3"/></svg><span>Цены</span></a>
+      <a href="#/messages" data-view="messages"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg><span>СМС</span></a>
+      </nav>
+      <div class="grow"></div>
+      <span id="sys" class="sys off">СИСТЕМА: ОЖИДАЕТ</span>
+    <div class="period">
+      <button id="periodBtn" class="pbtn">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        <span id="periodLabel"></span>
+        <svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div id="periodPop" class="pop" hidden>
+        <div id="presets" class="presets"></div>
+        <div class="cal">
+          <div class="calhead">
+            <button id="calPrev" class="cbtn" aria-label="Назад"><svg viewBox="0 0 24 24"><path d="M14.5 6 8.5 12l6 6"/></svg></button>
+            <b id="calTitle"></b>
+            <button id="calNext" class="cbtn" aria-label="Вперёд"><svg viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></svg></button>
+          </div>
+          <div class="wd"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
+          <div id="calGrid" class="days"></div>
+          <div class="calfoot"><span id="calSel"></span><button id="calApply" class="primary">Применить</button></div>
+        </div>
+      </div>
+    </div>
+      <button type="button" id="conn" class="chip" title="Состояние подключения">…</button>
+      <button type="button" id="srv" class="chip" title="Состояние сервера" hidden>Сервер</button>
+      <button id="settingsBtn" class="gear" title="Настройки" aria-label="Настройки" hidden><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </header>
+
+    <section class="cards">
+      <a class="card" href="#/workers" data-go="workers" title="Открыть воркеры">
+        <svg class="go" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        <label>Активные воркеры</label>
+        <div class="v"><b><span id="wA">0</span><i> / <span id="wT">0</span></i></b><svg id="spW" class="spark"></svg></div>
+      </a>
+      <a class="card" href="#/targets" data-go="targets" title="Открыть все цели">
+        <svg class="go" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        <label>Всего проанализировано</label>
+        <div class="v"><b id="stTotal">0</b><svg id="spT" class="spark"></svg></div>
+      </a>
+      <a class="card ok" href="#/targets" data-go="targets" title="Заработано за выбранный период">
+        <svg class="go" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        <label>Заработано</label>
+        <div class="v"><b id="stOk">0</b><span id="stOkPct" class="delta"></span></div>
+      </a>
+      <a class="card err" href="#/logs?hl=error" data-go="logs" data-hl="error" title="Перейти к последней ошибке в консоли">
+        <svg class="go" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        <label>Ошибок</label>
+        <div class="v"><b id="stErr">0</b><span id="stErrPct" class="delta"></span></div>
+      </a>
+      <div class="card ctl">
+        <div class="seg">
+          <button id="btnStart">Старт</button>
+          <button id="btnStop" class="on">Стоп</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <div class="col" id="col">
+        <section class="panel" id="workers">
+          <div class="ph"><h2>Воркеры <em id="wCount">0</em></h2><a id="addToggle" class="link" href="#/workers?m=worker"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Добавить</a></div>
+          <div class="tw">
+            <table>
+              <thead><tr><th>Логин</th><th>Статус</th><th>Steam ID / прокси</th><th>В работе</th><th></th></tr></thead>
+              <tbody id="wBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <div id="splitH" class="split split-h" role="separator" aria-orientation="horizontal" tabindex="0" title="Потяните, чтобы изменить высоту · двойной клик — сброс"></div>
+
+        <section class="panel" id="logs">
+          <div class="ph"><h2>Логи</h2><span id="cooldownChip" class="cooldown-chip" hidden></span><button id="logClear" class="link icon" type="button" title="Очистить консоль" aria-label="Очистить консоль"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M10 11v6M14 11v6"/></svg></button></div>
+          <div class="logwrap">
+            <div id="logBox" class="logs"></div>
+            <div class="logbtns">
+              <button id="logTop" class="lb" hidden title="В начало" aria-label="В начало"><svg viewBox="0 0 24 24"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5"/></svg></button>
+              <button id="logBottom" class="lb" hidden title="К новым записям" aria-label="К новым записям"><svg viewBox="0 0 24 24"><path d="M12 5v14M5.5 12.5 12 19l6.5-6.5"/></svg></button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div id="splitV" class="split split-v" role="separator" aria-orientation="vertical" tabindex="0" title="Потяните, чтобы изменить ширину · двойной клик — сброс"></div>
+
+      <section class="panel" id="targets">
+        <div class="ph"><h2>Цели <em id="tCount">0</em></h2><button id="srcBtn" type="button" class="ghost" style="margin-left:auto;margin-right:10px" title="Ссылки, из которых воркеры берут клиентов">Источники</button><a id="tAddToggle" class="link" href="#/targets?m=target"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Добавить</a></div>
+        <div id="filters" class="filters"></div>
+        <div class="thead"><span>Цель</span><span>Стоимость</span></div>
+        <div id="tList" class="tlist"></div>
+      </section>
+
+      <section class="panel" id="prices">
+        <div class="ph">
+          <h2>Цены CS2 <em id="pCount">0</em></h2>
+          <div class="pact">
+            <span id="pUpd" class="muted"></span>
+            <input id="pSearch" type="search" placeholder="Поиск предмета" autocomplete="off">
+            <button id="pricesBtn" type="button" class="ghost" title="Скачать актуальные цены в prices.json на сервере">Обновить</button>
+          </div>
+        </div>
+        <pre id="pText" class="ptext"></pre>
+      </section>
+
+      <section class="panel" id="messages">
+        <div class="ph">
+          <h2>СМС <em id="msgCount">0</em></h2>
+          <div class="pact">
+            <div class="vseg" id="msgView"><button type="button" data-v="blocks" class="on">Блоки</button><button type="button" data-v="text">Одним текстом</button></div>
+          </div>
+        </div>
+                <div class="msgbody" id="msgBody">
+          <p class="muted msghint">Для каждого типа источника свой текст. Первое сообщение после принятия заявки берётся случайное из <b>включённых</b> сообщений типа, откуда нашли игрока (DM, MATCHES, группа…). Если у типа пусто — берутся «Общие». <code>[твой_ник]</code> — ваш ник. Новый режим появляется здесь сам. В режиме «Одним текстом» каждая строка — одно сообщение.</p>
+          <div id="msgSections" class="msgsections"></div>
+          <p id="msgInfo" class="muted"></p>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<dialog id="mFb" class="modal">
+  <form onsubmit="return false">
+    <header><h3 id="fbTitle">Подключение</h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
+    <div class="rows" id="fbRows"></div>
+  </form>
+</dialog>
+
+<dialog id="mSrv" class="modal">
+  <form onsubmit="return false">
+    <header><h3>Сервер</h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
+    <div class="rows" id="srvRows"></div>
+    <div class="errs" id="srvErrs"></div>
+  </form>
+</dialog>
+
+<dialog id="mSources" class="modal">
+  <form onsubmit="return false">
+    <header><h3>Источники клиентов</h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
+    <p class="who">Ссылка на профиль или группу Steam, комнату или профиль FACEIT, либо любую страницу со SteamID. После «Старт» воркеры проверят инвентари найденных игроков.</p>
+    <div class="srcadd"><input id="srcUrl" placeholder="https://…" autocomplete="off"><button type="button" id="srcAdd" class="primary">Добавить</button></div>
+    <p class="msg" id="srcMsg" hidden></p>
+    <div id="srcList" class="srclist"></div>
+  </form>
+</dialog>
+
+<dialog id="mConfirm" class="modal">
+  <form onsubmit="return false">
+    <header><h3 id="cTitle">Удалить?</h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
+    <p class="who" id="cText"></p>
+    <footer><button type="button" class="ghost" data-close>Отмена</button><button type="button" id="cOk" class="primary">Удалить</button></footer>
+  </form>
+</dialog>
+
+<dialog id="mClear" class="modal">
+  <form onsubmit="return false">
+    <header><h3>Очистить консоль?</h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
+    <p class="who">Все записи консоли будут удалены, счётчик ошибок обнулится. Это нельзя отменить.</p>
+    <footer><button type="button" class="ghost" data-close>Отмена</button><button type="button" id="clearOk" class="primary">Очистить</button></footer>
+  </form>
+</dialog>
+
+<dialog id="mSet" class="modal">
+  <form onsubmit="return false">
+    <header><h3>Настройки</h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
+    <p class="who" id="setUser"></p>
+    <div class="setlist">
+      <button type="button" id="chPass" class="ghost">Сменить пароль</button>
+      <button type="button" id="signOut" class="ghost danger">Выйти из аккаунта</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="mPass" class="modal">
+  <form autocomplete="off">
+    <header><h3>Смена пароля</h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
+    <label>Текущий пароль<input name="old" type="password" autocomplete="current-password" required></label>
+    <label>Новый пароль <i>от 6 символов</i><input name="new" type="password" autocomplete="new-password" minlength="6" required></label>
+    <label>Повторите новый<input name="new2" type="password" autocomplete="new-password" minlength="6" required></label>
+    <p class="msg" hidden></p>
+    <footer><button type="button" class="ghost" data-close>Отмена</button><button type="submit" class="primary">Сменить</button></footer>
+  </form>
+</dialog>
+
+<dialog id="mWorker" class="modal">
+  <form id="workerForm" autocomplete="off">
+    <header><h3>Новый воркер</h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
+    <label>Логин<input name="login" required></label>
+    <label>Пароль<input name="password" type="password" required></label>
+    <label>2FA / секрет <i>необязательно</i><input name="secret"></label>
+    <label>Прокси <i>необязательно</i><input name="proxy" placeholder="хост:порт:логин:пароль"></label>
+    <p class="msg" hidden></p>
+    <footer><button type="button" class="ghost" data-close>Отмена</button><button type="submit" class="primary">Добавить</button></footer>
+  </form>
+</dialog>
+
+<dialog id="mProxy" class="modal">
+  <form id="proxyForm" autocomplete="off">
+    <header><h3>Прокси — <span id="proxyLogin"></span></h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
+    <label>Прокси <i>пусто — убрать</i><input name="proxy" placeholder="хост:порт:логин:пароль"></label>
+    <p class="msg" hidden></p>
+    <footer><button type="button" class="ghost" data-close>Отмена</button><button type="submit" class="primary">Сохранить</button></footer>
+  </form>
+</dialog>
+
+<dialog id="mSecret" class="modal">
+  <form id="secretForm" autocomplete="off">
+    <header><h3>2FA — <span id="secretLogin"></span></h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
+    <div id="secretBody"></div>
+    <p class="msg" hidden></p>
+    <footer id="secretFooter"><button type="button" class="ghost" data-close>Отмена</button><button type="submit" class="primary">Сохранить</button></footer>
+  </form>
+</dialog>
+
+<dialog id="mWInfo" class="modal wide">
+  <form method="dialog" autocomplete="off">
+    <header><h3>Воркер — <span id="wiLogin"></span> <span id="wiStatus" class="pill"></span></h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
+    <div id="wiMeta" class="wi-meta"></div>
+    <h4 class="wi-h">Таймеры</h4>
+    <div id="wiTimers" class="wi-list"></div>
+    <h4 class="wi-h">Очередь целей</h4>
+    <div id="wiQueue" class="wi-list"></div>
+    <h4 class="wi-h">Что делал этот профиль</h4>
+    <div id="wiLog" class="wi-log"></div>
+  </form>
+</dialog>
+
+<dialog id="mTarget" class="modal">
+  <form id="targetForm" autocomplete="off">
+    <header><h3>Новая цель</h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
+    <label>Цель <i>ник, домен или ID</i><input name="name" required></label>
+    <label>Оценочная стоимость, $<input name="value" type="number" min="0" step="any" placeholder="150"></label>
+    <div class="fld">Статус
+      <div class="chips">
+        <label><input type="radio" name="status" value="taken" checked><span>Взято в работу</span></label>
+        <label><input type="radio" name="status" value="invited"><span>Заявка отправлена</span></label>
+        <label><input type="radio" name="status" value="waiting"><span>Ждём принятия</span></label>
+      </div>
+    </div>
+    <p class="msg" hidden></p>
+    <footer><button type="button" class="ghost" data-close>Отмена</button><button type="submit" class="primary">Добавить</button></footer>
+  </form>
+</dialog>
+
+<dialog id="mEdit" class="modal">
+  <form id="editForm" autocomplete="off">
+    <header><h3 id="editTitle">Цель</h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
+    <div id="editInfo" class="tinfo" hidden></div>
+    <div id="editPath" class="tpath" hidden></div>
+    <div id="editChat" class="tchat" hidden>
+      <div class="tp-h">Переписка <small id="chatWho" class="muted"></small></div>
+      <div id="chatLog" class="chatlog"></div>
+      <div class="chatsend"><textarea id="chatText" rows="2" placeholder="Ответ клиенту — уйдёт в Steam от воркера, который ему писал"></textarea><button type="button" class="primary" id="chatSend">Отправить</button></div>
+      <small id="chatMsg" class="muted"></small>
+    </div>
+    <div id="editCtl" class="tctl" hidden><button type="button" class="ghost" id="tCancel" title="Остановить цепочку; отправленная заявка будет отозвана">⏹ Отменить цепочку</button><button type="button" class="ghost" id="tRestart" title="Начать путь цели с первого шага">↻ Запустить заново</button><small id="tCtlMsg" class="muted"></small></div>
+    <div class="fld">Статус
+      <div class="chips">
+        <label><input type="radio" name="status" value="taken"><span>Взято в работу</span></label>
+        <label><input type="radio" name="status" value="invited"><span>Заявка отправлена</span></label>
+        <label><input type="radio" name="status" value="waiting"><span>Ждём принятия</span></label>
+        <label><input type="radio" name="status" value="success"><span>Успешно</span></label>
+        <label><input type="radio" name="status" value="failed"><span>Неуспешно</span></label>
+      </div>
+    </div>
+    <div class="fld paybox" id="payBox"><span class="ptitle">Оплата</span>
+      <label class="chk"><input type="checkbox" name="paid"><i class="sw"></i><span>Была оплата</span></label>
+      <div id="payRow" class="payrow" hidden>
+        <label>Сумма, $<input name="earned" type="number" min="0" step="any" placeholder="0"></label>
+        <label>Дата оплаты<input name="paidDate" type="date"></label>
+      </div>
+    </div>
+    <label>Оценочная стоимость, $<input name="value" type="number" min="0" step="any"></label>
+    <p class="msg" hidden></p>
+    <footer><button type="button" class="danger" id="editDelete">Удалить</button><span class="grow"></span><button type="button" class="ghost" data-close>Отмена</button><button type="submit" class="primary">Сохранить</button></footer>
+  </form>
+</dialog>
+
+<div id="login" class="overlay" hidden>
+  <div class="login">
+    <h2>Вход</h2>
+    <form id="loginForm">
+      <input name="login" placeholder="Логин" autocomplete="username" required>
+      <input name="password" type="password" placeholder="Пароль" autocomplete="current-password" required>
+      <p class="msg" hidden></p>
+      <button type="submit">Войти</button>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
