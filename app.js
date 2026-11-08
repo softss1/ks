@@ -586,7 +586,7 @@ const engineAlive = () => !!(engineV && engineV.lastSeen && Date.now() - engineV
 function renderSrv(v) {
   if (v !== undefined) engineV = v;
   const c = $('srv'), alive = engineAlive();
-  c.textContent = 'Сервер · ' + (alive ? 'работает' : engineV && engineV.seen ? 'не отвечает' : 'не запущен');
+  c.textContent = 'Сервер · ' + (alive ? 'работает' : 'выключен');
   c.className = 'chip ' + (alive ? 'on' : 'bad');
 }
 function renderStatus() {

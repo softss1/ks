@@ -602,3 +602,8 @@ header.top .tabs a,header.top .chip,header.top .pbtn,header.top .sys{white-space
 @media(max-width:560px){.payrow{grid-template-columns:1fr}}
 .modal .chk{position:relative}
 .modal .chk .sw{margin-left:0;color:inherit}
+
+/* верхняя панель не вылезает за экран: шестерёнка не сжимается, на средних экранах всё компактнее */
+.top .gear{flex:none}
+@media(max-width:1500px){.top{gap:8px}.tabs a{padding:7px 10px;gap:6px}}
+@media(max-width:1350px){.tabs a span{display:none}.tabs a{padding:8px 10px}}
