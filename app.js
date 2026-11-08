@@ -1093,17 +1093,6 @@ $('loginForm').onsubmit = async e => {
   b.disabled = false;
 };
 $('settingsBtn').onclick = () => openModal($('mSet'));
-$('chPass').onclick = () => { $('mSet').close(); openModal($('mPass')); };
-$('mPass').querySelector('form').onsubmit = async e => {
-  e.preventDefault();
-  const f = e.target, m = f.querySelector('.msg'), b = f.querySelector('[type=submit]'); b.disabled = true;
-  try {
-    if (f.new.value !== f.new2.value) throw new Error('Новые пароли не совпадают');
-    await db.changePassword(f.old.value, f.new.value);
-    $('mPass').close(); logLine('Пароль изменён', 'success');
-  } catch (err) { m.textContent = err.message; m.hidden = false; }
-  b.disabled = false;
-};
 $('signOut').onclick = () => { $('mSet').close(); db.signOut(); };
 
 // ---------- subscriptions ----------

@@ -226,20 +226,8 @@
     <header><h3>Настройки</h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
     <p class="who" id="setUser"></p>
     <div class="setlist">
-      <button type="button" id="chPass" class="ghost">Сменить пароль</button>
       <button type="button" id="signOut" class="ghost danger">Выйти из аккаунта</button>
     </div>
-  </form>
-</dialog>
-
-<dialog id="mPass" class="modal">
-  <form autocomplete="off">
-    <header><h3>Смена пароля</h3><button type="button" class="x" data-close aria-label="Закрыть">✕</button></header>
-    <label>Текущий пароль<input name="old" type="password" autocomplete="current-password" required></label>
-    <label>Новый пароль <i>от 6 символов</i><input name="new" type="password" autocomplete="new-password" minlength="6" required></label>
-    <label>Повторите новый<input name="new2" type="password" autocomplete="new-password" minlength="6" required></label>
-    <p class="msg" hidden></p>
-    <footer><button type="button" class="ghost" data-close>Отмена</button><button type="submit" class="primary">Сменить</button></footer>
   </form>
 </dialog>
 
