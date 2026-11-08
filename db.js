@@ -340,6 +340,8 @@ async function fbDB() {
       } catch (e) { cleanup(d && d.parts); throw e; }
     },
     // один логин — одна строка: если в базе остались старые дубли, берём самую свежую запись
+    // таймер лимита (control/cooldowns) — для сайта без локального сервера; возвращает отписку
+    onCooldowns: (cb, onErr) => F.onSnapshot(F.doc(fs, 'control', 'cooldowns'), s => cb(s.exists() ? (s.data().list || []) : []), e => onErr && onErr(e)),
     onWorkers: cb => sub('workers', cb, () => {
       const best = new Map();
       for (const w of list(C.workers, (a, b) => (a.since || 0) - (b.since || 0))) { const p = best.get(w.login); if (!p || (w.since || 0) >= (p.since || 0)) best.set(w.login, w); }

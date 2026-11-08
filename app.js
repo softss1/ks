@@ -471,15 +471,23 @@ function watchCooldown() {
     chip.hidden = false;
   };
   const tick = setInterval(() => { data = data.map(c => ({ ...c, remainingMs: c.remainingMs - 1000 })).filter(c => c.remainingMs > 0); render(); }, 1000);
+  let stopDb = null;
   const poll = async () => {
-    try {
-      const r = await apiFetch(API + '/engine/cooldowns', { cache: 'no-store' });
-      if (r.ok) { data = await r.json(); render(); }
-    } catch (_) { /* бэкенд недоступен — не трогаем чип */ }
+    if (apiUp === null) await apiProbing;
+    if (apiUp) {
+      if (stopDb) { stopDb(); stopDb = null; }
+      try {
+        const r = await apiFetch(API + '/engine/cooldowns', { cache: 'no-store' });
+        if (r.ok) { data = await r.json(); render(); }
+      } catch (_) { /* бэкенд недоступен — не трогаем чип */ }
+    } else if (!stopDb && db.onCooldowns) {
+      // сайт открыт не с локального сервера: сервер публикует лимиты в Firestore (control/cooldowns)
+      try { stopDb = db.onCooldowns(list => { data = list.map(c => ({ ...c, remainingMs: c.until - Date.now() })).filter(c => c.remainingMs > 0); render(); }, () => { stopDb = null; }); } catch (_) { stopDb = null; }
+    }
   };
   poll();
   const id = setInterval(poll, 5000);
-  return () => { clearInterval(id); clearInterval(tick); };
+  return () => { clearInterval(id); clearInterval(tick); if (stopDb) stopDb(); };
 }
 watchCooldown();
 
@@ -520,6 +528,7 @@ function renderTargets(list) {
     const nx = nextLine(t);
     if (t.worker && ['waiting', 'accepted', 'completed', 'action_needed', 'canceled'].includes(t.status)) left.append(el('div', 'nx', 'воркер ' + t.worker));
     else if (t.status === 'taken' && t.planned_worker) left.append(el('div', 'nx', 'отправит воркер ' + t.planned_worker));
+    if (t.last_error && t.next_try_at) { const e = el('div', 'nx', '⚠ ' + String(t.last_error).slice(0, 110)); e.title = t.last_error; left.append(e); }
     if (nx) { const l = el('div', 'nx', nx.text || ''); if (nx.due) { l.dataset.due = nx.due; l.dataset.pre = nx.pre; l.textContent = nx.pre + fmtLeft(nx.due - Date.now()); } left.append(l); }
     const right = el('div', 'r'); right.append(el('div', 'val', money(t.value)));
     if (t.earned != null) right.append(el('div', 'earn', 'оплата ' + money(t.earned)));
@@ -855,16 +864,26 @@ function drawPrices() {
     : (priceRows.length ? 'Ничего не найдено' : 'Цен пока нет. Нажмите «Обновить» — цены скачаются в prices.json на сервере.');
   $('pCount').textContent = priceRows.length;
 }
+// цены лежат в prices.json на сервере; последняя загруженная копия хранится в браузере — без сервера список всё равно виден
+const PRICE_KEY = 'pm_prices_v1';
+function showPrices(d, note) {
+  priceRows = Object.entries(d.prices || {}).sort((a, b) => a[0].localeCompare(b[0], 'en'));
+  $('pUpd').textContent = (d.updatedAt ? 'обновлено ' + new Date(d.updatedAt).toLocaleString('ru-RU') : 'не обновлялось') + (note ? ' · ' + note : '');
+  drawPrices();
+}
 async function loadPrices() {
+  let cached = null;
+  try { cached = JSON.parse(localStorage.getItem(PRICE_KEY) || 'null'); } catch (_) {}
+  if (cached && !priceRows.length) showPrices(cached, 'сохранённая копия');
   try {
     const r = await apiFetch(API + '/prices', { cache: 'no-store' });
-    if (!r.ok) throw new Error(r.status === 404 ? 'сервер устарел — перезапустите start.command' : 'HTTP ' + r.status);
+    if (!r.ok) throw new Error(r.status === 404 ? 'сервер устарел — перезапустите сервер' : 'HTTP ' + r.status);
     const d = await r.json();
-    priceRows = Object.entries(d.prices || {}).sort((a, b) => a[0].localeCompare(b[0], 'en'));
-    $('pUpd').textContent = d.updatedAt ? 'обновлено ' + new Date(d.updatedAt).toLocaleString('ru-RU') : 'не обновлялось';
-    drawPrices();
+    showPrices(d);
+    try { localStorage.setItem(PRICE_KEY, JSON.stringify({ updatedAt: d.updatedAt, prices: d.prices })); } catch (_) {} // не влезло в хранилище — не страшно
   } catch (e) {
-    $('pText').textContent = 'Не удалось загрузить цены: ' + e.message;
+    if (cached) showPrices(cached, 'сервер закрыт — показана сохранённая копия');
+    else $('pText').textContent = 'Цены пока не загружены: ' + e.message + '. Запустите сервер и откройте вкладку ещё раз.';
   }
 }
 $('pSearch').addEventListener('input', drawPrices);
