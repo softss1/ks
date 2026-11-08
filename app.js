@@ -237,6 +237,8 @@ setInterval(() => {
 }, 1000);
 
 // Путь цели в воронке: [{ label, state: done|now|next|skip, at, due, note }]
+// сервер пишет время тика редко (раз в ~5 минут): между записями следующий тик досчитываем шагами по 60 с, пока сервер жив
+const fnNext = () => { if (!funnelNext) return 0; const now = Date.now(); if (funnelNext >= now - 5000 || !engineAlive()) return funnelNext; return funnelNext + Math.ceil((now - 5000 - funnelNext) / 60000) * 60000; };
 let chatSince = 0, funnelNext = 0, funnelSince = 0, funnelOnly = []; // когда воронка в следующий раз проверит цели (приходит с сервера)
 const WAIT_MS = 72 * 3600e3, FU_MIN = 5 * 60e3, FU_MAX = 10 * 60e3;
 function pathOf(t) {
@@ -308,14 +310,14 @@ function renderPath(t) {
 // Когда реально произойдёт повтор: первая проверка воронки, не раньше next_try_at
 function retryAt(t) {
   let at = t.next_try_at || 0;
-  if (funnelNext > Date.now() - 5000) { let k = funnelNext; while (k < at - 10000) k += 60000; at = k; }
+  if (fnNext() > Date.now() - 5000) { let k = fnNext(); while (k < at - 10000) k += 60000; at = k; }
   return at;
 }
 // короткая строка «что дальше» в карточке списка
 function nextLine(t) {
   if (pathOf(t)[0]?.state === 'skip' && t.status === 'taken') return { text: funnelOnly.length ? 'тест-режим: заявку не отправляем (только свой ID)' : 'старая запись — заявку не отправляем' };
   if (t.last_error && t.next_try_at) return { due: retryAt(t), pre: '⚠ ошибка, повтор через ' };
-  if (t.status === 'taken') return funnelNext > Date.now() - 5000 ? { due: funnelNext, pre: '→ заявка в друзья через ' } : { text: '→ заявка в друзья: воронка не отвечает' };
+  if (t.status === 'taken') return fnNext() > Date.now() - 5000 ? { due: fnNext(), pre: '→ заявка в друзья через ' } : { text: '→ заявка в друзья: воронка не отвечает' };
   if (t.status === 'waiting' && t.waiting_since) return { due: t.waiting_since + WAIT_MS, pre: '→ нет ответа — отмена через ' };
   if (t.status === 'accepted' && t.accepted_at) return { due: t.accepted_at + (t.followup_delay_ms || FU_MAX), pre: '→ первое сообщение через ' };
   return null;
