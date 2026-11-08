@@ -188,7 +188,7 @@ async function fbDB() {
   const fs = F.getFirestore(app);
   const col = n => F.collection(fs, n);
   const ST = { reads: 0, writes: 0, lastSync: 0, error: '' };       // счётчики текущей сессии (для окна «Firebase»)
-  const ENGINE_TTL = 12 * 60 * 1000;                                  // воркер пишет control/engine.lastSeen минимум раз в 5 мин
+  const ENGINE_TTL = 5 * 60 * 1000;                                   // сервер пишет control/engine.lastSeen раз в 2 мин
   let engine = null;
   const fail = e => { console.error('Firestore:', e); ST.error = e.code || e.message || 'ошибка'; setConn(false); };
   const synced = n => { ST.reads += n; ST.lastSync = Date.now(); ST.error = ''; };
@@ -314,6 +314,31 @@ async function fbDB() {
       }
       return r;
     }),
+    // команда серверу через Firestore (когда сайт открыт не с локального сервера): control/rpc_* → сервер выполняет → ответ в тот же документ
+    async rpc(method, path, body) {
+      if (!engine || !engine.lastSeen || Date.now() - engine.lastSeen > ENGINE_TTL) throw new Error('сервер не запущен — запустите его на компьютере');
+      const id = 'rpc_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      const ref = F.doc(fs, 'control', id);
+      await F.setDoc(ref, { kind: 'rpc', status: 'pending', method, path, body: body == null ? '' : JSON.stringify(body), at: Date.now() });
+      ST.writes++;
+      const cleanup = n => { F.deleteDoc(ref).catch(() => {}); for (let i = 0; i < (n || 0); i++) F.deleteDoc(F.doc(fs, 'control', id + '_p' + i)).catch(() => {}); };
+      let d;
+      try {
+        d = await new Promise((resolve, reject) => {
+          let off = () => {};
+          const t = setTimeout(() => { off(); reject(new Error('сервер не ответил за 2 минуты')); }, 120000);
+          off = F.onSnapshot(ref, s => { const x = s.data(); if (x && x.status === 'done') { clearTimeout(t); off(); resolve(x); } }, e => { clearTimeout(t); reject(e); });
+        });
+        let text = d.resp || '';
+        if (d.parts > 0) {
+          const parts = await Promise.all(Array.from({ length: d.parts }, (_, i) => F.getDoc(F.doc(fs, 'control', id + '_p' + i))));
+          text = parts.map(p => p.data()?.data || '').join('');
+        }
+        ST.reads += 1 + (d.parts || 0);
+        cleanup(d.parts);
+        return { code: d.code || 200, text };
+      } catch (e) { cleanup(d && d.parts); throw e; }
+    },
     onWorkers: cb => sub('workers', cb, () => list(C.workers, (a, b) => (a.since || 0) - (b.since || 0))),
     onTargets: cb => sub('targets', cb, () => list(C.targets, (a, b) => (b.ts || 0) - (a.ts || 0))),
     onRun: cb => sub('run', cb, () => running),

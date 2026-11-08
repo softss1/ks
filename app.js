@@ -371,13 +371,29 @@ const API = apiBase || '/api';
 // Сайт может быть открыт без локального сервера (GitHub Pages, телефон): тогда данные идут из Firestore,
 // а действия, которым нужен сервер (воркеры, источники, чат…), недоступны — вместо них понятное сообщение.
 let apiUp = null, apiProbeAt = 0;
-const apiProbe = () => { apiProbeAt = Date.now(); return apiFetch(API + '/workers', { method: 'HEAD', cache: 'no-store' }).then(r => (apiUp = r.ok), () => (apiUp = false)); };
+const apiProbe = () => { apiProbeAt = Date.now(); return fetch(API + '/workers', { cache: 'no-store' }).then(r => (apiUp = r.ok && /json/.test(r.headers.get('content-type') || '')), () => (apiUp = false)); };
 let apiProbing = apiProbe();
+// действия, которые сервер выполняет по команде из Firestore, когда сайт открыт НЕ с локального сервера (GitHub, телефон)
+const RPC_OK = [
+  /^\/targets\/[^/]+\/(cancel|restart|chat|reply)$/, /^\/update-prices$/, /^\/prices$/,
+  /^\/workers\/[^/]+\/(activity|enable|disable)$/, /^\/sources(\/[^/]+)?$/, /^\/cybershoke\/modes$/, /^\/messages$/,
+];
+const rpcCache = new Map();
 async function apiFetch(url, opts) {
   if (apiUp === null) await apiProbing;
   if (!apiUp && Date.now() - apiProbeAt > 10000) await (apiProbing = apiProbe());
-  if (!apiUp) throw new Error('локальный сервер не запущен или сайт открыт не с него — это действие сейчас недоступно');
-  return fetch(url, opts);
+  if (apiUp) return fetch(url, opts);
+  const path = String(url).slice(API.length).split('?')[0];
+  if (db.rpc && RPC_OK.some(re => re.test(path))) {
+    const method = (opts && opts.method) || 'GET';
+    // опросы (источники, чат, сообщения…) не должны долбить базу: одинаковые GET-запросы берём из кэша на 15 с, любая запись его сбрасывает
+    if (method === 'GET') { const c = rpcCache.get(path); if (c && Date.now() - c.at < 15000) return new Response(c.text, { status: c.code, headers: { 'Content-Type': 'application/json' } }); }
+    else rpcCache.clear();
+    const r = await db.rpc(method, path, opts && opts.body ? JSON.parse(opts.body) : null);
+    if (method === 'GET' && r.code < 400) rpcCache.set(path, { at: Date.now(), ...r });
+    return new Response(r.text, { status: r.code, headers: { 'Content-Type': 'application/json' } });
+  }
+  throw new Error('это действие (пароли, прокси, 2FA, добавление воркеров) доступно только когда сайт открыт с компьютера: запустите сервер и откройте http://localhost:3000');
 }
 // GET /api/workers → [{ login, status, steamId, lastError }]; очищает таблицу и рендерит заново
 async function fetchWorkers() {
