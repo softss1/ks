@@ -264,7 +264,7 @@ function pathOf(t) {
   // ветка «приняли»
   if (st === 'accepted') {
     const d = t.followup_delay_ms;
-    P.push({ label: 'Пауза перед первым сообщением', state: 'now', due: t.accepted_at ? t.accepted_at + (d || FU_MAX) : null, pre: 'сообщение через ', note: d ? '' : 'случайно 5–10 мин' });
+    P.push({ label: 'Пауза перед первым сообщением', state: 'now', due: t.accepted_at && d ? t.accepted_at + d : null, pre: 'сообщение через ', note: d ? '' : 'случайно 5–10 мин' });
   } else if (st === 'action_needed') {
     P.push({ label: 'Первое сообщение отправлено', state: 'done', at: t.completed_at, worker: t.worker, noWorker: !t.worker });
     P.push({ label: 'Клиент ответил — нужен ваш ответ', state: 'now', at: t.action_needed_at, note: t.last_reply ? '«' + t.last_reply.slice(0, 120) + '»' : '' });
@@ -529,6 +529,7 @@ function renderTargets(list) {
     const sub = el('div', 's'); sub.append(el('i', t.status === 'completed' ? 'success' : t.status), document.createTextNode(stText(t)));
     left.append(el('div', 'n', t.name), sub);
     const nx = nextLine(t);
+    if (t.mode) left.append(el('div', 'nx', '📍 ' + modeLabel(t.mode)));
     if (t.worker && ['waiting', 'accepted', 'completed', 'action_needed', 'canceled'].includes(t.status)) left.append(el('div', 'nx', 'воркер ' + t.worker));
     else if (t.status === 'taken' && t.planned_worker) left.append(el('div', 'nx', 'отправит воркер ' + t.planned_worker));
     if (t.last_error && t.next_try_at) { const e = el('div', 'nx', '⚠ ' + String(t.last_error).slice(0, 110)); e.title = t.last_error; left.append(e); }
@@ -1004,6 +1005,7 @@ bindForm('mTarget', d => db.addTarget(d));
 
 // карточка цели: смена статуса; при «Успешно» спрашиваем, сколько заработано
 let editId = null, pendingEditId = null;
+const modeLabel = m => ({ MATCHES: 'матч (комната Cybershoke)', GROUPS: 'группа Steam / ссылка', DM: 'DM (Cybershoke)' }[m] || ('Cybershoke · ' + m));
 function renderInfo(t) {
   const box = $('editInfo'); box.replaceChildren();
   const id = String(t.steamId || t.name || '');
@@ -1013,6 +1015,7 @@ function renderInfo(t) {
   link.href = t.profileUrl || `https://steamcommunity.com/profiles/${id}`; link.target = '_blank'; link.rel = 'noopener noreferrer';
   const head = el('div', 'ih'); head.append(el('span', 'iid', id), link);
   box.append(head);
+  if (t.mode) box.append(el('div', 'imode', 'Найден: ' + modeLabel(t.mode)));
   if (t.isPrivate) box.append(el('div', 'istate bad', 'Инвентарь закрыт — оценить нельзя'));
   else if (t.checkedAt) {
     box.append(el('div', 'istate ok', `Инвентарь открыт · предметов ${t.itemsCount || 0} · оценка ${money(t.value)}`));

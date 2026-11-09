@@ -607,3 +607,5 @@ header.top .tabs a,header.top .chip,header.top .pbtn,header.top .sys{white-space
 .top .gear{flex:none}
 @media(max-width:1500px){.top{gap:8px}.tabs a{padding:7px 10px;gap:6px}}
 @media(max-width:1350px){.tabs a span{display:none}.tabs a{padding:8px 10px}}
+
+.imode{font-size:12px;color:var(--mut);margin:4px 0 2px}
