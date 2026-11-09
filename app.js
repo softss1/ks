@@ -287,6 +287,7 @@ function renderPath(t) {
   const stv = t.status, ctl = $('editCtl');
   ctl.hidden = !['taken', 'waiting', 'accepted', 'canceled', 'completed', 'action_needed'].includes(stv);
   $('tCancel').hidden = !['taken', 'waiting', 'accepted'].includes(stv);
+  $('tSendNow').hidden = stv !== 'accepted';
   if ($('tCtlMsg') && ctl.dataset.for !== String(t.id)) { $('tCtlMsg').textContent = ''; ctl.dataset.for = String(t.id); }
   const steps = pathOf(t);
   box.hidden = false;
@@ -377,7 +378,7 @@ const apiProbe = () => { apiProbeAt = Date.now(); return fetch(API + '/workers',
 let apiProbing = apiProbe();
 // действия, которые сервер выполняет по команде из Firestore, когда сайт открыт НЕ с локального сервера (GitHub, телефон)
 const RPC_OK = [
-  /^\/targets\/[^/]+\/(cancel|restart|chat|reply)$/, /^\/update-prices$/, /^\/prices$/,
+  /^\/targets\/[^/]+\/(cancel|restart|chat|reply|send-now)$/, /^\/update-prices$/, /^\/prices$/,
   /^\/workers\/[^/]+\/(activity|enable|disable|guard-login|proxy)$/, /^\/sources(\/[^/]+)?$/, /^\/cybershoke\/modes$/, /^\/messages$/,
 ];
 const rpcCache = new Map();
@@ -1375,19 +1376,20 @@ setInterval(() => { if ($('mEdit').open) loadChat(); }, 4000);
 // ---------- карточка цели: отменить цепочку / запустить заново ----------
 async function targetCtl(act) {
   const t = targets.find(x => String(x.id) === String(editId)); if (!t) return;
-  const cancel = act === 'cancel', msg = $('tCtlMsg');
-  const ok = await confirmBox(cancel ? 'Отменить цепочку?' : 'Запустить заново?',
+  const cancel = act === 'cancel', now = act === 'send-now', msg = $('tCtlMsg');
+  const ok = now ? await confirmBox('Отправить СМС сейчас?', `${t.name}: первое сообщение уйдёт сразу, без ожидания 5–10 минут.`, 'Отправить') : await confirmBox(cancel ? 'Отменить цепочку?' : 'Запустить заново?',
     cancel ? `${t.name}: цепочка остановится, отправленная заявка в друзья будет отозвана (или цель убрана из друзей). Позже можно запустить заново.`
            : `${t.name}: путь начнётся с первого шага — заявка в друзья, ожидание, сообщение. Старые отметки пути сбросятся.`, cancel ? 'Отменить' : 'Запустить');
   if (!ok) return;
-  $('tCancel').disabled = $('tRestart').disabled = true; msg.textContent = '…';
+  $('tCancel').disabled = $('tRestart').disabled = $('tSendNow').disabled = true; msg.textContent = '…';
   try {
     const r = await apiFetch(API + '/targets/' + encodeURIComponent(t.id) + '/' + act, { method: 'POST' });
     const res = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(res.error || (r.status === 404 ? 'сервер устарел — перезапустите сервер' : 'HTTP ' + r.status));
-    msg.textContent = cancel ? 'Цепочка отменена' : 'Запущено заново'; logLine(`${t.name}: ${cancel ? 'цепочка отменена вручную' : 'запущено заново'}`, 'info');
+    msg.textContent = now ? 'Сообщение отправлено' : cancel ? 'Цепочка отменена' : 'Запущено заново'; logLine(`${t.name}: ${now ? 'сообщение отправлено вручную' : cancel ? 'цепочка отменена вручную' : 'запущено заново'}`, 'info');
   } catch (e) { msg.textContent = 'Ошибка: ' + e.message; }
-  $('tCancel').disabled = $('tRestart').disabled = false;
+  $('tCancel').disabled = $('tRestart').disabled = $('tSendNow').disabled = false;
 }
 $('tCancel').onclick = () => targetCtl('cancel');
 $('tRestart').onclick = () => targetCtl('restart');
+$('tSendNow').onclick = () => targetCtl('send-now');
