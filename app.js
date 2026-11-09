@@ -1015,7 +1015,7 @@ function renderInfo(t) {
   link.href = t.profileUrl || `https://steamcommunity.com/profiles/${id}`; link.target = '_blank'; link.rel = 'noopener noreferrer';
   const head = el('div', 'ih'); head.append(el('span', 'iid', id), link);
   box.append(head);
-  if (t.mode) box.append(el('div', 'imode', 'Найден: ' + modeLabel(t.mode)));
+  box.append(el('div', 'imode', 'Найден: ' + (t.mode ? modeLabel(t.mode) : 'источник не записан (цель добавлена до обновления или найдена не из источника)')));
   if (t.isPrivate) box.append(el('div', 'istate bad', 'Инвентарь закрыт — оценить нельзя'));
   else if (t.checkedAt) {
     box.append(el('div', 'istate ok', `Инвентарь открыт · предметов ${t.itemsCount || 0} · оценка ${money(t.value)}`));
