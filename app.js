@@ -191,7 +191,7 @@ function renderWorkers(list) {
     del.onclick = async () => {
       if (await confirmBox('Удалить воркера?', `Аккаунт ${w.login} будет удалён из списка. Это нельзя отменить.`)) {
         apiFetch(API + '/workers/' + encodeURIComponent(w.login), { method: 'DELETE' })
-          .then(r => { if (r.status === 404) throw new Error('сервер устарел — перезапустите start.command'); if (!r.ok) throw new Error('DELETE → ' + r.status); logLine(`Воркер ${w.login} удалён`, 'info'); return fetchWorkers(); })
+          .then(r => { if (r.status === 404) throw new Error('сервер устарел — перезапустите сервер'); if (!r.ok) throw new Error('DELETE → ' + r.status); logLine(`Воркер ${w.login} удалён`, 'info'); return fetchWorkers(); })
           .catch(e => logLine(`Не удалось удалить воркера ${w.login}: ${e.message}`));
       }
     };
@@ -202,7 +202,7 @@ function renderWorkers(list) {
       try {
         const r = await apiFetch(API + '/workers/' + encodeURIComponent(w.login) + (off ? '/enable' : '/disable'), { method: 'POST' });
         const res = await r.json().catch(() => ({}));
-        if (r.status === 404 && !res.error) throw new Error('сервер устарел — перезапустите start.command');
+        if (r.status === 404 && !res.error) throw new Error('сервер устарел — перезапустите сервер');
         if (!r.ok) throw new Error(res.error || r.status);
         if (!off) logLine(`Воркер ${w.login} отключён (выход из Steam)`, 'info');
         else if (res.status === 'Active') logLine(`Воркер ${w.login} включён, вход выполнен`, 'success');
@@ -244,7 +244,7 @@ const WAIT_MS = 72 * 3600e3, FU_MIN = 5 * 60e3, FU_MAX = 10 * 60e3;
 function pathOf(t) {
   if (funnelSince && t.status === 'taken') {
     if (funnelOnly.length && !funnelOnly.includes(String(t.id)))
-      return [{ label: 'Тест-режим: заявка этой цели не отправляется', state: 'skip', note: 'воронка сейчас работает только для твоего ID. Чтобы слать заявки новым целям: FUNNEL_ONLY_OWN=0 в .env и перезапуск сервера' }];
+      return [{ label: 'Тест-режим: заявка этой цели не отправляется', state: 'skip', note: 'включён тест-режим сервера (FUNNEL_ONLY_OWN=1 в .env): воронка работает только для своих ID. Уберите эту строку из .env и перезапустите сервер' }];
     if (!funnelOnly.length && !((t.ts || 0) >= funnelSince))
       return [{ label: 'Старая запись — воронка её не обрабатывает', state: 'skip', note: 'создана до запуска воронки: в работу берутся только новые цели' }];
   }
@@ -327,7 +327,7 @@ async function refreshWorkerInfo() {
   if (!wiLogin) return;
   try {
     const r = await apiFetch(API + '/workers/' + encodeURIComponent(wiLogin) + '/activity', { cache: 'no-store' });
-    if (!r.ok) throw new Error(r.status === 404 ? 'сервер устарел — перезапустите start.command' : 'GET → ' + r.status);
+    if (!r.ok) throw new Error(r.status === 404 ? 'сервер устарел — перезапустите сервер' : 'GET → ' + r.status);
     const d = await r.json();
     const [cls, label] = WORKER_ST[d.status] || ['err', d.status || '—'];
     const pill = $('wiStatus'); pill.className = 'pill ' + cls; pill.textContent = label;
@@ -378,7 +378,7 @@ let apiProbing = apiProbe();
 // действия, которые сервер выполняет по команде из Firestore, когда сайт открыт НЕ с локального сервера (GitHub, телефон)
 const RPC_OK = [
   /^\/targets\/[^/]+\/(cancel|restart|chat|reply)$/, /^\/update-prices$/, /^\/prices$/,
-  /^\/workers\/[^/]+\/(activity|enable|disable|guard-login)$/, /^\/sources(\/[^/]+)?$/, /^\/cybershoke\/modes$/, /^\/messages$/,
+  /^\/workers\/[^/]+\/(activity|enable|disable|guard-login|proxy)$/, /^\/sources(\/[^/]+)?$/, /^\/cybershoke\/modes$/, /^\/messages$/,
 ];
 const rpcCache = new Map();
 async function apiFetch(url, opts) {
@@ -395,7 +395,7 @@ async function apiFetch(url, opts) {
     if (method === 'GET' && r.code < 400) rpcCache.set(path, { at: Date.now(), ...r });
     return new Response(r.text, { status: r.code, headers: { 'Content-Type': 'application/json' } });
   }
-  throw new Error('это действие (пароли, прокси, 2FA, добавление воркеров) доступно только когда сайт открыт с компьютера: запустите сервер и откройте http://localhost:3000');
+  throw new Error('это действие (пароли, 2FA, добавление воркеров) доступно только когда сайт открыт с компьютера: запустите сервер и откройте http://localhost:3000');
 }
 // GET /api/workers → [{ login, status, steamId, lastError }]; очищает таблицу и рендерит заново
 async function fetchWorkers() {
@@ -652,7 +652,7 @@ $('clearOk').onclick = async () => {
   // консоль не должна оставаться пустой: сразу показываем состояние каждого воркера
   try {
     const r = await fetch('/api/workers-report', { method: 'POST' });
-    if (!r.ok) throw new Error(r.status === 404 ? 'сервер устарел — перезапустите start.command' : 'HTTP ' + r.status);
+    if (!r.ok) throw new Error(r.status === 404 ? 'сервер устарел — перезапустите сервер' : 'HTTP ' + r.status);
   } catch (e) { logLine('Отчёт по воркерам недоступен: ' + e.message, 'warn'); }
 };
 $('logTop').onclick = () => logBox.scrollTo({ top: 0, behavior: 'smooth' });
@@ -736,7 +736,7 @@ function openSecretModal(w) {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload || {}),
     });
     const res = await r.json().catch(() => ({}));
-    if (r.status === 404 && !res.error) throw new Error('сервер устарел — перезапустите start.command');
+    if (r.status === 404 && !res.error) throw new Error('сервер устарел — перезапустите сервер');
     if (!r.ok) throw new Error(res.error || r.status);
     return res;
   }
@@ -838,12 +838,13 @@ function openProxyModal(w) {
     e.preventDefault();
     const btn = f.querySelector('[type=submit]'); btn.disabled = true;
     const val = f.proxy.value.trim();
+    if (val && val === String(w.proxy || '').trim() && !/@|:.*:.*:/.test(val)) { dlg.close(); return; } // в поле показан только host:port — менять нечего (иначе потеряем логин/пароль)
     try {
       const r = await apiFetch(API + '/workers/' + encodeURIComponent(w.login) + '/proxy', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ proxy: val }),
       });
       const res = await r.json().catch(() => ({}));
-      if (r.status === 404 && !res.error) throw new Error('сервер устарел — перезапустите start.command');
+      if (r.status === 404 && !res.error) throw new Error('сервер устарел — перезапустите сервер');
       if (!r.ok) throw new Error(res.error || r.status);
       logLine(`Воркер ${w.login}: прокси ${val ? 'обновлён (' + res.proxy + ')' : 'убран'}, статус: ${res.status}`, 'success');
       dlg.close();
@@ -899,7 +900,7 @@ async function updatePricesRest(btn) {
   try {
     const r = await apiFetch(API + '/update-prices', { cache: 'no-store' });
     const res = await r.json().catch(() => ({}));
-    if (r.status === 404 && !res.error) throw new Error('сервер устарел — перезапустите start.command');
+    if (r.status === 404 && !res.error) throw new Error('сервер устарел — перезапустите сервер');
     if (!r.ok || !res.ok) throw new Error(res.error || 'HTTP ' + r.status);
     (res.skipped || []).forEach(m => logLine('Источник цен пропущен — ' + m, 'warn'));
     logLine(`Цены обновлены: ${res.count} предметов сохранено в prices.json на сервере (источник: ${res.source})`, 'success');
@@ -940,7 +941,7 @@ async function loadSources(force) {
   const box = $('srcList');
   try {
     const r = await apiFetch(API + '/sources', { cache: 'no-store' });
-    if (!r.ok) throw new Error(r.status === 404 ? 'сервер устарел — перезапустите start.command' : 'HTTP ' + r.status);
+    if (!r.ok) throw new Error(r.status === 404 ? 'сервер устарел — перезапустите сервер' : 'HTTP ' + r.status);
     const list = await r.json();
     if (list.some(x => Array.isArray(x.modes))) await loadCsModes();
     // не перерисовываем список, пока человек выделяет/копирует текст, и когда данные не изменились — иначе выделение сбрасывается
@@ -961,7 +962,7 @@ async function loadSources(force) {
         const want = chk.checked; chk.disabled = true; row.classList.toggle('off', !want);
         try {
           const r = await apiFetch(API + '/sources/' + encodeURIComponent(s.id), { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ enabled: want }) });
-          if (!r.ok) throw new Error(r.status === 404 ? 'сервер устарел — перезапустите start.command' : 'HTTP ' + r.status);
+          if (!r.ok) throw new Error(r.status === 404 ? 'сервер устарел — перезапустите сервер' : 'HTTP ' + r.status);
         } catch (e) { logLine('Не удалось переключить источник: ' + e.message); }
         loadSources(true);
       };
@@ -988,7 +989,7 @@ async function addSource() {
   try {
     const r = await apiFetch(API + '/sources', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: inp.value }) });
     const res = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(res.error || (r.status === 404 ? 'сервер устарел — перезапустите start.command' : 'HTTP ' + r.status));
+    if (!r.ok) throw new Error(res.error || (r.status === 404 ? 'сервер устарел — перезапустите сервер' : 'HTTP ' + r.status));
     inp.value = '';
     logLine('Ссылка-источник добавлена. Нажмите «Старт», чтобы воркеры начали проверку', 'info');
     loadSources(true);
@@ -1322,9 +1323,9 @@ function renderMsgs() {
 async function loadMessages() {
   try {
     const r = await apiFetch(API + '/messages', { cache: 'no-store' });
-    if (!r.ok) throw new Error(r.status === 404 ? 'сервер устарел — перезапустите start.command' : 'HTTP ' + r.status);
+    if (!r.ok) throw new Error(r.status === 404 ? 'сервер устарел — перезапустите сервер' : 'HTTP ' + r.status);
     const d = await r.json();
-    if (!d || Array.isArray(d) || !d.groups) throw new Error('сервер устарел — перезапустите start.command (иначе сообщения не загрузятся и могут затереться)');
+    if (!d || Array.isArray(d) || !d.groups) throw new Error('сервер устарел — перезапустите сервер (иначе сообщения не загрузятся и могут затереться)');
     if (msgLoaded && $('messages').contains(document.activeElement) && ['TEXTAREA', 'INPUT'].includes(document.activeElement.tagName)) { if ((d.types || []).join() !== msgTypes.join()) { msgTypes = d.types || []; renderMsgs(); } return; } // не перебиваем набор текста
     msgGroups = d.groups || { _all: [] }; msgTypes = d.types || []; msgSeeded = !!d.seeded; msgOff = new Set(d.off || []); msgLoaded = true;
     if (!msgSeeded) { // первый раз: у каждого типа стартовый текст = текущие «Общие»; новые типы потом появятся пустыми
@@ -1363,7 +1364,7 @@ $('chatSend').onclick = async () => {
   try {
     const r = await apiFetch(API + '/targets/' + encodeURIComponent(t.id) + '/reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: ta.value }) });
     const res = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(res.error || (r.status === 404 ? 'сервер устарел — перезапустите start.command' : 'HTTP ' + r.status));
+    if (!r.ok) throw new Error(res.error || (r.status === 404 ? 'сервер устарел — перезапустите сервер' : 'HTTP ' + r.status));
     ta.value = ''; msg.textContent = 'Отправлено от воркера ' + res.worker; loadChat(true);
   } catch (e) { msg.textContent = 'Ошибка: ' + e.message; }
   $('chatSend').disabled = false;
@@ -1383,7 +1384,7 @@ async function targetCtl(act) {
   try {
     const r = await apiFetch(API + '/targets/' + encodeURIComponent(t.id) + '/' + act, { method: 'POST' });
     const res = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(res.error || (r.status === 404 ? 'сервер устарел — перезапустите start.command' : 'HTTP ' + r.status));
+    if (!r.ok) throw new Error(res.error || (r.status === 404 ? 'сервер устарел — перезапустите сервер' : 'HTTP ' + r.status));
     msg.textContent = cancel ? 'Цепочка отменена' : 'Запущено заново'; logLine(`${t.name}: ${cancel ? 'цепочка отменена вручную' : 'запущено заново'}`, 'info');
   } catch (e) { msg.textContent = 'Ошибка: ' + e.message; }
   $('tCancel').disabled = $('tRestart').disabled = false;
