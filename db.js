@@ -75,7 +75,7 @@ function localDB() {
     if (level === 'error') s.events.push({ ts, k: 'err' }); // каждая ошибка из консоли попадает в счётчик «Ошибок»
   };
   const STATUSES = ['taken', 'invited', 'waiting', 'accepted', 'completed', 'action_needed', 'canceled', 'success', 'failed'];
-  const ST_LABEL = { taken: 'Взято в работу', invited: 'Заявка отправлена — ждём принятия', waiting: 'Заявка отправлена — ждём принятия', accepted: 'Приняли заявку — скоро напишем', completed: 'Успешно — всё отправлено, клиент у нас, следим за ответом', action_needed: 'Клиент ответил — нужен ваш ответ', canceled: 'Не приняли за 72 ч — заявка отозвана скриптом', success: 'Успешно — всё отправлено, клиент у нас, следим за ответом', failed: 'Неуспешно' };
+  const ST_LABEL = { taken: 'Взято в работу', invited: 'Заявка отправлена — ждём принятия', waiting: 'Заявка отправлена — ждём принятия', accepted: 'Приняли заявку — скоро напишем', completed: 'Успешно — всё отправлено, клиент у нас, следим за ответом', action_needed: 'Клиент ответил — нужен ваш ответ', canceled: 'Не приняли за 3 ч — заявка отозвана скриптом', success: 'Успешно — всё отправлено, клиент у нас, следим за ответом', failed: 'Неуспешно' };
 
   return {
     mode: 'local',
@@ -194,7 +194,7 @@ async function fbDB() {
   const synced = n => { ST.reads += n; ST.lastSync = Date.now(); ST.error = ''; };
   const dk = t => { const d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
   const STATUSES = ['taken', 'invited', 'waiting', 'accepted', 'completed', 'action_needed', 'canceled', 'success', 'failed'];
-  const ST_LABEL = { taken: 'Взято в работу', invited: 'Заявка отправлена — ждём принятия', waiting: 'Заявка отправлена — ждём принятия', accepted: 'Приняли заявку — скоро напишем', completed: 'Успешно — всё отправлено, клиент у нас, следим за ответом', action_needed: 'Клиент ответил — нужен ваш ответ', canceled: 'Не приняли за 72 ч — заявка отозвана скриптом', success: 'Успешно — всё отправлено, клиент у нас, следим за ответом', failed: 'Неуспешно' };
+  const ST_LABEL = { taken: 'Взято в работу', invited: 'Заявка отправлена — ждём принятия', waiting: 'Заявка отправлена — ждём принятия', accepted: 'Приняли заявку — скоро напишем', completed: 'Успешно — всё отправлено, клиент у нас, следим за ответом', action_needed: 'Клиент ответил — нужен ваш ответ', canceled: 'Не приняли за 3 ч — заявка отозвана скриптом', success: 'Успешно — всё отправлено, клиент у нас, следим за ответом', failed: 'Неуспешно' };
 
   const mail = l => { l = String(l || '').trim().toLowerCase(); return l.includes('@') ? l : l + '@kss.app'; };
   const authMsg = e => ({

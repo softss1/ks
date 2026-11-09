@@ -15,7 +15,7 @@ const WORKER_ST = {
   Active: ['ok', 'Активен'], AuthError: ['err', 'Ошибка входа'], RateLimit: ['warn', 'Лимит'],
   Error: ['err', 'Ошибка'], Offline: ['idle', 'Офлайн'], Disabled: ['idle', 'Отключён'],
 };
-const TARGET_ST = { taken: 'Взято в работу', invited: 'Заявка отправлена — ждём принятия', waiting: 'Заявка отправлена — ждём принятия', accepted: 'Приняли заявку — скоро напишем', completed: 'Успешно — всё отправлено, клиент у нас, следим за ответом', action_needed: 'Клиент ответил — нужен ваш ответ', canceled: 'Не приняли за 72 ч — заявка отозвана скриптом', success: 'Успешно — всё отправлено, клиент у нас, следим за ответом', failed: 'Неуспешно' };
+const TARGET_ST = { taken: 'Взято в работу', invited: 'Заявка отправлена — ждём принятия', waiting: 'Заявка отправлена — ждём принятия', accepted: 'Приняли заявку — скоро напишем', completed: 'Успешно — всё отправлено, клиент у нас, следим за ответом', action_needed: 'Клиент ответил — нужен ваш ответ', canceled: 'Не приняли за 3 ч — заявка отозвана скриптом', success: 'Успешно — всё отправлено, клиент у нас, следим за ответом', failed: 'Неуспешно' };
 const TARGET_SHORT = { taken: 'Взято', waiting: 'Ждём принятия', accepted: 'Приняли', action_needed: 'Ответ!', canceled: 'Отменено', success: 'Успешно', failed: 'Неуспешно' };
 const HI_VALUE = 300;
 const LEVELS = { info: 'ИНФО', success: 'УСПЕХ', warn: 'ВНИМАНИЕ', error: 'ОШИБКА' };
@@ -240,7 +240,7 @@ setInterval(() => {
 // сервер пишет время тика редко (раз в ~5 минут): между записями следующий тик досчитываем шагами по 60 с, пока сервер жив
 const fnNext = () => { if (!funnelNext) return 0; const now = Date.now(); if (funnelNext >= now - 5000 || !engineAlive()) return funnelNext; return funnelNext + Math.ceil((now - 5000 - funnelNext) / 60000) * 60000; };
 let chatSince = 0, funnelNext = 0, funnelSince = 0, funnelOnly = []; // когда воронка в следующий раз проверит цели (приходит с сервера)
-const WAIT_MS = 72 * 3600e3, FU_MIN = 5 * 60e3, FU_MAX = 10 * 60e3;
+const WAIT_MS = 3 * 3600e3, FU_MIN = 5 * 60e3, FU_MAX = 10 * 60e3;
 function pathOf(t) {
   if (funnelSince && t.status === 'taken') {
     if (funnelOnly.length && !funnelOnly.includes(String(t.id)))
@@ -257,9 +257,9 @@ function pathOf(t) {
     ? { label: 'Отправка заявки в друзья', state: 'now', worker: t.planned_worker, wlabel: '🤖 отправит воркер: ', noWorkerText: 'воркер пока не назначен — нет свободных (не в сети или исчерпан лимит 10 заявок)', ...(funnelNext > Date.now() - 5000 ? { due: funnelNext, pre: 'отправка через ' } : { note: 'воронка не отвечает — сервер выключен?' }), note2: 'нужен воркер в сети, лимит 10 заявок в день на воркера (сообщения в лимит не входят)' }
     : { label: 'Заявка в друзья отправлена', state: 'done', at: t.waiting_since, worker: t.worker, noWorker: !t.worker });
   const cancelAt = (t.waiting_since || 0) + WAIT_MS;
-  if (st === 'taken') P.push({ label: 'Ждём принятия заявки (до 72 ч)', state: 'next', note: 'таймер 72 ч стартует после отправки' });
+  if (st === 'taken') P.push({ label: 'Ждём принятия заявки (до 3 ч)', state: 'next', note: 'таймер 3 ч стартует после отправки' });
   else if (st === 'waiting') P.push({ label: 'Ждём принятия заявки', state: 'now', due: cancelAt, pre: 'отмена через ' });
-  else if (st === 'canceled') P.push({ label: 'Заявку не приняли за 72 ч', state: 'done', at: t.canceled_at || cancelAt });
+  else if (st === 'canceled') P.push({ label: 'Заявку не приняли за 3 ч', state: 'done', at: t.canceled_at || cancelAt });
   else P.push({ label: 'Заявку приняли', state: 'done', at: t.accepted_at, worker: t.worker, noWorker: !t.worker });
   // ветка «приняли»
   if (st === 'accepted') {
@@ -275,7 +275,7 @@ function pathOf(t) {
   }
   // ветка «не приняли»
   if (st === 'canceled') P.push({ label: 'Заявка отменена (удалён из друзей)', state: 'done', at: t.canceled_at, worker: t.worker, noWorker: !t.worker });
-  else if (st === 'taken' || st === 'waiting') P.push({ label: 'Если не примут за 72 ч → отмена заявки', state: 'next', due: st === 'waiting' ? cancelAt : null, pre: 'через ' });
+  else if (st === 'taken' || st === 'waiting') P.push({ label: 'Если не примут за 3 ч → отмена заявки, слот освободится', state: 'next', due: st === 'waiting' ? cancelAt : null, pre: 'через ' });
   // ошибка последней попытки + обратный отсчёт до повтора — на текущем шаге
   const cur = P.find(x => x.state === 'now');
   if (cur && t.last_error) { cur.err = t.last_error + ` · попытка №${t.try_count || 1}` + (t.last_error_at ? ' · ' + fmtAt(t.last_error_at) : ''); if (t.next_try_at) cur.retryDue = retryAt(t); }
