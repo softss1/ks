@@ -266,7 +266,9 @@ function pathOf(t) {
     const d = t.followup_delay_ms;
     P.push({ label: 'Пауза перед первым сообщением', state: 'now', due: t.accepted_at && d ? t.accepted_at + d : null, pre: 'сообщение через ', note: d ? '' : 'случайно 5–10 мин' });
   } else if (st === 'action_needed') {
-    P.push({ label: 'Первое сообщение отправлено', state: 'done', at: t.completed_at, worker: t.worker, noWorker: !t.worker });
+    P.push(t.completed_at || t.last_out_at
+      ? { label: 'Первое сообщение отправлено', state: 'done', at: t.completed_at, worker: t.worker, noWorker: !t.worker }
+      : { label: 'Первое сообщение НЕ отправлялось (клиент написал первым)', state: 'skip', note: 'нажмите «Запустить заново» — сообщение уйдёт по таймеру, или напишите сами' });
     P.push({ label: 'Клиент ответил — нужен ваш ответ', state: 'now', at: t.action_needed_at, note: t.last_reply ? '«' + t.last_reply.slice(0, 120) + '»' : '' });
   } else if (st === 'completed') {
     P.push({ label: 'Первое сообщение отправлено', state: 'done', at: t.completed_at, worker: t.worker, noWorker: !t.worker });
