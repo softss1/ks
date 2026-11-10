@@ -240,7 +240,7 @@ setInterval(() => {
 // сервер пишет время тика редко (раз в ~5 минут): между записями следующий тик досчитываем шагами по 60 с, пока сервер жив
 const fnNext = () => { if (!funnelNext) return 0; const now = Date.now(); if (funnelNext >= now - 5000 || !engineAlive()) return funnelNext; return funnelNext + Math.ceil((now - 5000 - funnelNext) / 60000) * 60000; };
 let chatSince = 0, funnelNext = 0, funnelSince = 0, funnelOnly = []; // когда воронка в следующий раз проверит цели (приходит с сервера)
-const WAIT_MS = 3 * 3600e3, FU_MIN = 5 * 60e3, FU_MAX = 10 * 60e3;
+const WAIT_MS = 3 * 3600e3, FU_MIN = 2 * 60e3, FU_MAX = 5 * 60e3;
 function pathOf(t) {
   if (funnelSince && t.status === 'taken') {
     if (funnelOnly.length && !funnelOnly.includes(String(t.id)))
@@ -264,7 +264,7 @@ function pathOf(t) {
   // ветка «приняли»
   if (st === 'accepted') {
     const d = t.followup_delay_ms;
-    P.push({ label: 'Пауза перед первым сообщением', state: 'now', due: t.accepted_at && d ? t.accepted_at + d : null, pre: 'сообщение через ', note: d ? '' : 'случайно 5–10 мин' });
+    P.push({ label: 'Пауза перед первым сообщением', state: 'now', due: t.accepted_at && d ? t.accepted_at + d : null, pre: 'сообщение через ', note: d ? '' : 'случайно 2–5 мин' });
   } else if (st === 'action_needed') {
     P.push(t.completed_at || t.last_out_at
       ? { label: 'Первое сообщение отправлено', state: 'done', at: t.completed_at, worker: t.worker, noWorker: !t.worker }
@@ -273,7 +273,7 @@ function pathOf(t) {
   } else if (st === 'completed') {
     P.push({ label: 'Первое сообщение отправлено', state: 'done', at: t.completed_at, worker: t.worker, noWorker: !t.worker });
   } else if (st !== 'canceled') {
-    P.push({ label: 'Если примут → пауза 5–10 мин → первое сообщение', state: 'next' });
+    P.push({ label: 'Если примут → пауза 2–5 мин → первое сообщение', state: 'next' });
   }
   // ветка «не приняли»
   if (st === 'canceled') P.push({ label: 'Заявка отменена (удалён из друзей)', state: 'done', at: t.canceled_at, worker: t.worker, noWorker: !t.worker });
@@ -1382,7 +1382,7 @@ setInterval(() => { if ($('mEdit').open) loadChat(); }, 4000);
 async function targetCtl(act) {
   const t = targets.find(x => String(x.id) === String(editId)); if (!t) return;
   const cancel = act === 'cancel', now = act === 'send-now', msg = $('tCtlMsg');
-  const ok = now ? await confirmBox('Отправить СМС сейчас?', `${t.name}: первое сообщение уйдёт сразу, без ожидания 5–10 минут.`, 'Отправить') : await confirmBox(cancel ? 'Отменить цепочку?' : 'Запустить заново?',
+  const ok = now ? await confirmBox('Отправить СМС сейчас?', `${t.name}: первое сообщение уйдёт сразу, без ожидания 2–5 минут.`, 'Отправить') : await confirmBox(cancel ? 'Отменить цепочку?' : 'Запустить заново?',
     cancel ? `${t.name}: цепочка остановится, отправленная заявка в друзья будет отозвана (или цель убрана из друзей). Позже можно запустить заново.`
            : `${t.name}: путь начнётся с первого шага — заявка в друзья, ожидание, сообщение. Старые отметки пути сбросятся.`, cancel ? 'Отменить' : 'Запустить');
   if (!ok) return;
