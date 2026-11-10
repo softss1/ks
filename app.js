@@ -1349,7 +1349,7 @@ let chatFor = null, chatSig = '';
 async function loadChat(force) {
   const t = targets.find(x => String(x.id) === String(editId));
   const box = $('editChat'); if (!t) return;
-  const can = ['accepted', 'completed', 'action_needed'].includes(t.status);
+  const can = ['accepted', 'completed', 'action_needed', 'success', 'invited'].includes(t.status) || !!(t.worker || t.last_reply || t.last_out); // и при ручном статусе переписка видна
   box.hidden = !can; if (!can) return;
   $('chatWho').textContent = t.worker ? '· от воркера ' + t.worker : '';
   try {
